@@ -11,7 +11,12 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./data/db:/data/db
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   flask_app:
     build: .
@@ -23,3 +28,6 @@ services:
       - mongo
     environment:
       - MONGO_URI=mongodb://root:root@mongo:27017/
+
+volumes:
+  mongo_data:
